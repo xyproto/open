@@ -3,6 +3,7 @@ extern crate serde_derive;
 extern crate docopt;
 
 use docopt::Docopt;
+use std::process::Command;
 
 const VERSION_STRING: &'static str = "open 0.0.1";
 const USAGE: &'static str = "

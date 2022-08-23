@@ -16,3 +16,11 @@ license = "GPL-3.0"
 docopt = "1.1.0"
 serde = "1.0"
 serde_derive = "1.0"
+
+[lib]
+name = "open"
+path = "src/lib.rs"
+
+[[bin]]
+name = "open"
+path = "src/bin.rs"
