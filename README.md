@@ -1,6 +1,6 @@
-# open
+# This is a work in progress!
 
-### This is a work in progress!
+# open
 
 The `open` command, but for Linux.
 
