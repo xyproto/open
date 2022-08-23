@@ -1,6 +1,18 @@
 [package]
 name = "open"
-version = "0.1.0"
-edition = "2021"
+version = "0.0.1"
+authors = ["Alexander F. Rødseth <xyproto@archlinux.org>"]
+exclude = [
+    "main.cpp",
+    "*.pro*",
+    "Makefile",
+]
+description = "Open files and directories"
+homepage = "https://github.com/xyproto/open"
+keywords = ["open", "utility"]
+license = "GPL-3.0"
 
 [dependencies]
+docopt = "1.1.0"
+serde = "1.0"
+serde_derive = "1.0"
