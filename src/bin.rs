@@ -3,7 +3,11 @@ extern crate serde_derive;
 extern crate docopt;
 
 use docopt::Docopt;
+
+use std::fs;
 use std::process::Command;
+use std::path::Path;
+use std::path::PathBuf;
 
 const VERSION_STRING: &'static str = "open 0.0.1";
 const USAGE: &'static str = "
@@ -30,20 +34,55 @@ const USAGE: &'static str = "
 
 #[derive(Debug, Deserialize)]
 struct Args {
-    arg_width: Option<u64>,
     flag_version: bool,
 }
 
+pub fn get_desktop_file(mime_type: String) -> String {
+    let cmd = Command::new("xdg-mime")
+        .arg("query")
+        .arg("default")
+        .arg(mime_type)
+        .output()
+        .unwrap();
+    String::from_utf8(cmd.stdout).unwrap()
+}
+
+// TODO: Optional return
+pub fn full_path_to_desktop_file(desktop_file: String) -> PathBuf {
+	let mut path = Path::new(&("~/.local/share/applications/".to_owned() + &desktop_file));
+	if path.exists() {
+		println!("found {:?}", path);
+		return path.to_owned().to_path_buf();
+	}
+	path = Path::new(&("/usr/local/share/applications/".to_owned() + &desktop_file));
+	if path.exists() {
+		println!("found {:?}", path);
+		return path.to_path_buf();
+	}
+	path = Path::new(&("/usr/share/applications/".to_owned() + &desktop_file));
+	if path.exists() {
+		println!("found {:?}", path);
+		return path.to_path_buf();
+	}
+	println!("NOT FOUND!");
+	return Path::new(&(&desktop_file)).to_path_buf()
+}
+
 fn main() {
+    let desktop_file_for_text_plain = get_desktop_file("text/plain".to_string());
+    println!("for text/plain: {}", desktop_file_for_text_plain);
+    let path = full_path_to_desktop_file(desktop_file_for_text_plain);
+    println!("for text/plain: {:?}", path);
+    println!("for text/plain: {:?}", path.display());
+    println!("for text/plain: {:?}", &path.display());
+    println!("for text/plain: {:?}", fs::canonicalize(&path));
+
+
     let args: Args = Docopt::new(VERSION_STRING.to_owned() + "\n" + USAGE)
-                            .and_then(|d| d.deserialize())
-                            .unwrap_or_else(|e| e.exit());
+        .and_then(|d| d.deserialize())
+        .unwrap_or_else(|e| e.exit());
     if args.flag_version {
         println!("{}", VERSION_STRING);
         std::process::exit(0);
     }
-
-	let foo = Command::new("echo").arg("hello").output().unwrap();
-
-    println!("FOO {}", String::from_utf8_lossy(&foo.stdout));
 }
