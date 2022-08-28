@@ -48,40 +48,43 @@ pub fn get_desktop_file(mime_type: String) -> String {
 }
 
 // TODO: Optional return
-pub fn full_path_to_desktop_file(desktop_file: String) -> PathBuf {
+pub fn full_path_to_desktop_file(desktop_file: String) -> Option<PathBuf> {
 	let mut path_string = "~/.local/share/applications/".to_owned() + &desktop_file;
 	let mut path = Path::new(&path_string);
 	if path.exists() {
 		println!("found {:?}", path);
-		return path.to_owned().to_path_buf();
+		return Some(path.to_path_buf());
 	}
 
 	path_string = "/usr/local/share/applications/".to_owned() + &desktop_file;
 	path = Path::new(&path_string);
 	if path.exists() {
 		println!("found {:?}", path);
-		return path.to_path_buf();
+		return Some(path.to_path_buf());
 	}
 
 	path_string = "/usr/share/applications/".to_owned() + &desktop_file;
 	path = Path::new(&path_string);
 	if path.exists() {
 		println!("found {:?}", path);
-		return path.to_path_buf();
+		return Some(path.to_path_buf());
 	}
 
-	println!("NOT FOUND!");
-	return Path::new(&(&desktop_file)).to_path_buf()
+	None
 }
 
 fn main() {
     let desktop_file_for_text_plain = get_desktop_file("text/plain".to_string());
     println!("for text/plain: {}", desktop_file_for_text_plain);
-    let path = full_path_to_desktop_file(desktop_file_for_text_plain);
-    println!("for text/plain: {:?}", path);
-    println!("for text/plain: {:?}", path.display());
-    println!("for text/plain: {:?}", &path.display());
-    println!("for text/plain: {:?}", fs::canonicalize(&path));
+    let maybe_path = full_path_to_desktop_file(desktop_file_for_text_plain.to_owned());
+
+	let path_string = desktop_file_for_text_plain.to_owned();
+	let apath = maybe_path.unwrap_or(Path::new(&path_string).to_path_buf());
+
+    println!("for text/plain: {:?}", apath);
+    println!("for text/plain: {:?}", apath.display());
+    println!("for text/plain: {:?}", &apath.display());
+    println!("for text/plain: {:?}", fs::canonicalize(&apath));
 
 
     let args: Args = Docopt::new(VERSION_STRING.to_owned() + "\n" + USAGE)
