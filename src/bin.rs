@@ -49,21 +49,27 @@ pub fn get_desktop_file(mime_type: String) -> String {
 
 // TODO: Optional return
 pub fn full_path_to_desktop_file(desktop_file: String) -> PathBuf {
-	let mut path = Path::new(&("~/.local/share/applications/".to_owned() + &desktop_file));
+	let mut path_string = "~/.local/share/applications/".to_owned() + &desktop_file;
+	let mut path = Path::new(&path_string);
 	if path.exists() {
 		println!("found {:?}", path);
 		return path.to_owned().to_path_buf();
 	}
-	path = Path::new(&("/usr/local/share/applications/".to_owned() + &desktop_file));
+
+	path_string = "/usr/local/share/applications/".to_owned() + &desktop_file;
+	path = Path::new(&path_string);
 	if path.exists() {
 		println!("found {:?}", path);
 		return path.to_path_buf();
 	}
-	path = Path::new(&("/usr/share/applications/".to_owned() + &desktop_file));
+
+	path_string = "/usr/share/applications/".to_owned() + &desktop_file;
+	path = Path::new(&path_string);
 	if path.exists() {
 		println!("found {:?}", path);
 		return path.to_path_buf();
 	}
+
 	println!("NOT FOUND!");
 	return Path::new(&(&desktop_file)).to_path_buf()
 }
