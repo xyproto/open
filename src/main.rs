@@ -44,7 +44,6 @@ pub fn desktop_file_from_mime_type(mime_type: &str) -> Option<String> {
         .arg(mime_type)
         .output();
     if let Some(cmd_output) = cmd_output.ok() {
-        // return the command output as an Option<String>
         Some(
             String::from_utf8(cmd_output.stdout.to_owned())
                 .unwrap()
