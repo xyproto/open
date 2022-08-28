@@ -47,27 +47,21 @@ pub fn get_desktop_file(mime_type: String) -> String {
     String::from_utf8(cmd.stdout).unwrap()
 }
 
-// TODO: Optional return
+// full_path_to_desktop_file tries to find the path to the given desktop file,
+// for instance "geany.desktop" on the current system.
 pub fn full_path_to_desktop_file(desktop_file: String) -> Option<PathBuf> {
-	let mut path_string = "~/.local/share/applications/".to_owned() + &desktop_file;
-	let mut path = Path::new(&path_string);
-	if path.exists() {
-		println!("found {:?}", path);
-		return Some(path.to_path_buf());
-	}
 
-	path_string = "/usr/local/share/applications/".to_owned() + &desktop_file;
-	path = Path::new(&path_string);
-	if path.exists() {
-		println!("found {:?}", path);
-		return Some(path.to_path_buf());
-	}
+	let path_strings = [
+	  "~/.local/share/applications/",
+	  "/usr/local/share/applications/",
+	  "/usr/share/applications/"
+	];
 
-	path_string = "/usr/share/applications/".to_owned() + &desktop_file;
-	path = Path::new(&path_string);
-	if path.exists() {
-		println!("found {:?}", path);
-		return Some(path.to_path_buf());
+	for path_string in path_strings {
+	  let path = Path::new(path_string).join(desktop_file.to_owned()).to_path_buf();
+	  if path.exists() {
+		  return Some(path);
+	  }
 	}
 
 	None
