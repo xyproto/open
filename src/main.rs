@@ -35,33 +35,12 @@ struct Args {
 }
 
 fn main() {
-    let maybe_desktop_file = open::desktop_file_from_mime_type("text/plain");
-
-    if let Some(desktop_file) = maybe_desktop_file {
-        println!("for text/plain: {}", desktop_file);
-        let maybe_path_buf = open::full_path_to_desktop_file(&desktop_file);
-        if let Some(path_buf) = maybe_path_buf {
-            println!("for text/plain: {}", path_buf.display());
-        } else {
-            println!("could not find the path for {}", desktop_file);
-            std::process::exit(1);
-        }
-    } else {
-        println!("could not find desktop file for text/plain");
-        std::process::exit(1);
+    if let Some(desktop_file_path) = open::full_path_to_desktop_file_from_mime_type("text/plain") {
+        println!(
+            "for text/plain: {}",
+            desktop_file_path.display().to_string()
+        );
     }
-
-    //     if let None = maybe_desktop_file_for_text_plain {
-    //     	println!("ost");
-    //     	std::process::exit(1);
-    //     }
-    //     let maybe_path = full_path_to_desktop_file(maybe_desktop_file_for_text_plain.unwrap().to_owned());
-
-    //     let apath = maybe_path.unwrap_or(Path::new(&maybe_path.unwrap().to_owned()).to_path_buf());
-    //     println!("for text/plain: {:?}", apath);
-    //     println!("for text/plain: {:?}", apath.display());
-    //     println!("for text/plain: {:?}", &apath.display());
-    //     println!("for text/plain: {:?}", fs::canonicalize(&apath));
 
     let args: Args = Docopt::new(VERSION_STRING.to_owned() + "\n" + USAGE)
         .and_then(|d| d.deserialize())
